@@ -78,7 +78,6 @@ public class JuegoActivity extends AppCompatActivity{
         editor.putString("turnoPC", String.valueOf(turnoPC));
         editor.putString("turnoActual", String.valueOf(turnoActual));
 
-        // Guardamos las acciones registradas en el tablero como un String contiguo
         StringBuilder sb = new StringBuilder();
         for (char c : tablero.getCeldas()) {
             sb.append(c);
@@ -156,7 +155,7 @@ public class JuegoActivity extends AppCompatActivity{
                 tvEstado.setText("Es tu turno (" + turnoHumano + ")");
             } else {
                 // El delay en este caso es para dar un pequeño instante de tiempo y que la pc no juegue al instante.
-                tvEstado.postDelayed(this::procesarJugadaPC, 300); //Pendiente a la creacion del metodo procesarJugadaPC
+                tvEstado.postDelayed(this::procesarJugadaPC, 300);
             }
         }
     }
