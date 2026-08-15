@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="32dp"
+    android:gravity="center">
+
+    <!-- Título Principal -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tres en Raya"
+        android:textSize="36sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        android:layout_marginBottom="40dp" />
+
+    <!-- Sección para elegir el simbolo -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Elige tu símbolo:"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="12dp" />
+
+    <RadioGroup
+        android:id="@+id/rgSimbolo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="32dp">
+
+        <RadioButton
+            android:id="@+id/rbX"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="X"
+            android:textSize="18sp"
+            android:checked="true"
+            android:layout_marginEnd="32dp" />
+
+        <RadioButton
+            android:id="@+id/rbO"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="O"
+            android:textSize="18sp" />
+    </RadioGroup>
+
+    <!-- Sección para elegir quien comenzara la partida -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="¿Quién inicia la partida?"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="12dp" />
+
+    <RadioGroup
+        android:id="@+id/rgTurno"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginBottom="40dp">
+
+        <RadioButton
+            android:id="@+id/rbYo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Empiezo yo"
+            android:textSize="18sp"
+            android:checked="true"
+            android:layout_marginBottom="8dp"/>
+
+        <RadioButton
+            android:id="@+id/rbPC"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Empieza la computadora"
+            android:textSize="18sp" />
+    </RadioGroup>
+
+    <!-- Botón de Inicio de la partida -->
+    <Button
+        android:id="@+id/btnJugar"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:text="INICIAR JUEGO"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:backgroundTint="#003366"
+        android:textColor="@android:color/white"/>
+
+</LinearLayout>
