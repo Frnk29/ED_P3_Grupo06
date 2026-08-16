@@ -42,6 +42,16 @@ public class Tablero {
 
     public int calcularUtilidad(char jugadorTurno) {
         char oponente = (jugadorTurno == 'X') ? 'O' : 'X';
+
+        if (hayGanador(jugadorTurno)) {
+            return 100; // Premia con un número inmenso si la máquina gana
+        }
+        //El algoritmo MiniMax al simular una posible victoria del oponente vera el -100
+        //el cual es un gran numero en contra por lo cual hara lo necesario para bloquear
+        //de inmediato la jugada que lo hace peligrar
+        if (hayGanador(oponente)) {
+            return -100; // Castiga con un número negativo inmenso si el usuario gana
+        }
         int pJugador = contarLineasDisponibles(jugadorTurno, oponente);
         int pOponente = contarLineasDisponibles(oponente, jugadorTurno);
         return pJugador - pOponente;

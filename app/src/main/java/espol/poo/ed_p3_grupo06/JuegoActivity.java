@@ -70,7 +70,7 @@ public class JuegoActivity extends AppCompatActivity{
         });
     }
     
-    //LOGICA DE PERSISTENCIA (REPOSITORIO LOCAL)
+    //LOGICA DE PERSISTENCIA
     private void guardarPartidaLocal() {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("existe_guardado", true);
