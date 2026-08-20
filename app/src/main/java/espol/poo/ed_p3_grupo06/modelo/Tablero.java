@@ -1,6 +1,12 @@
 package espol.poo.ed_p3_grupo06.modelo;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ArrayDeque;
+import java.util.Queue;
+
 public class Tablero {
+    private Queue<Jugada> historialReal = new ArrayDeque<>();
     private List<Character> celdas;
 
     public Tablero() {
@@ -10,12 +16,21 @@ public class Tablero {
         }
     }
 
-    // Constructor para clonar
+    // Constructor para clonar (NOTA: El clon no copia el historial para no afectar la interfaz)
     private Tablero(List<Character> celdasCopia) {
         this.celdas = new ArrayList<>(celdasCopia);
     }
 
-    // Método para realizar una jugada
+    public class Jugada{
+        public int index;
+        public char simbol;
+
+        public Jugada(int index, char simbol){
+            this.index = index;
+            this.simbol = simbol;
+        }
+    }
+
     public boolean hacerJugada(int fila, int col, char simbolo) {
         int indice = (fila * 3) + col;
 
@@ -24,6 +39,15 @@ public class Tablero {
             return true;
         }
         return false;
+    }
+
+    public void registrarJugadaHistorial(int fila, int col, char simbolo) {
+        int indice = (fila * 3) + col;
+        historialReal.offer(new Jugada(indice, simbolo));
+    }
+
+    public Queue<Jugada> getHistorialReal() {
+        return historialReal;
     }
 
     public Tablero clonar() {
@@ -46,9 +70,9 @@ public class Tablero {
         if (hayGanador(jugadorTurno)) {
             return 100; // Premia con un número inmenso si la máquina gana
         }
-        //El algoritmo MiniMax al simular una posible victoria del oponente vera el -100
-        //el cual es un gran numero en contra por lo cual hara lo necesario para bloquear
-        //de inmediato la jugada que lo hace peligrar
+        // El algoritmo MiniMax al simular una posible victoria del oponente vera el -100
+        // el cual es un gran numero en contra por lo cual hara lo necesario para bloquear
+        // de inmediato la jugada que lo hace peligrar
         if (hayGanador(oponente)) {
             return -100; // Castiga con un número negativo inmenso si el usuario gana
         }
@@ -74,7 +98,7 @@ public class Tablero {
         return lineasDisponibles;
     }
 
-    // Método para verificar si existe un ganador, recibe por parámetro el símbolo del jugador que queremos verificar
+    // Método para verificar si existe un ganador
     public boolean hayGanador(char simbolo) {
         int[][] lineasGanadoras = {
                 { 0, 1, 2 }, { 3, 4, 5 }, { 6, 7, 8 }, // Filas
@@ -92,7 +116,7 @@ public class Tablero {
         return false;
     }
 
-    //método auxiliar para verificar ganador sin especificar símbolo
+    // Método auxiliar para verificar ganador sin especificar símbolo
     public boolean hayGanador() {
         return hayGanador('X') || hayGanador('O');
     }

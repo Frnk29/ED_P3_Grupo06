@@ -23,13 +23,15 @@ public class JuegoActivity extends AppCompatActivity{
     private TextView tvEstado;
     private List<Button> botonesTablero;
     private Button btnVolver;
+
+    private TextView tvHistorial;
     private SharedPreferences prefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_juego);
-
+        tvHistorial = findViewById(R.id.tvHistorialJugadas);
         tablero = new Tablero();
         minimax = new MiniMax();
         botonesTablero = new ArrayList<>();
@@ -62,15 +64,15 @@ public class JuegoActivity extends AppCompatActivity{
 
         btnVolver.setOnClickListener(v -> {
             if (!juegoTerminado) {
-                guardarPartidaLocal(); 
+                guardarPartidaLocal();
             } else {
-                limpiarPartidaLocal(); 
+                limpiarPartidaLocal();
             }
-            finish(); 
+            finish();
         });
     }
-    
-    //LOGICA DE PERSISTENCIA
+
+    // LOGICA DE PERSISTENCIA
     private void guardarPartidaLocal() {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("existe_guardado", true);
@@ -97,19 +99,21 @@ public class JuegoActivity extends AppCompatActivity{
                 int fila = i / 3;
                 int col = i % 3;
                 tablero.hacerJugada(fila, col, estadoTablero.charAt(i));
+                tablero.registrarJugadaHistorial(fila, col, estadoTablero.charAt(i));
             }
         }
         actualizarInterfaz();
+        actualizarHistorialVisual();
         verificarTurno();
     }
-    
+
     private void limpiarPartidaLocal() {
         SharedPreferences.Editor editor = prefs.edit();
         editor.clear();
         editor.apply();
     }
 
-//LOGICA DEL JUEGO 
+    // LOGICA DEL JUEGO
     private void procesarJugadaHumano(int indice) {
         if (turnoActual != turnoHumano || juegoTerminado) return;
 
@@ -118,6 +122,9 @@ public class JuegoActivity extends AppCompatActivity{
 
         if (tablero.getCasilla(fila, col) == '-') {
             tablero.hacerJugada(fila, col, turnoHumano);
+            tablero.registrarJugadaHistorial(fila, col, turnoHumano); // Guardamos la jugada
+            agregarJugadaAlHistorial(fila, col, turnoHumano); // Añadimos al texto con append()
+
             turnoActual = turnoPC;
             actualizarInterfaz();
             verificarTurno();
@@ -131,14 +138,18 @@ public class JuegoActivity extends AppCompatActivity{
         Nodo mejorJugada = minimax.encontrarMejorMovimiento(arbol, turnoPC);
 
         if (mejorJugada != null) {
-            tablero.hacerJugada(mejorJugada.getFilaJugada(), mejorJugada.getColJugada(), turnoPC);
+            int filaPC = mejorJugada.getFilaJugada();
+            int colPC = mejorJugada.getColJugada();
+
+            tablero.hacerJugada(filaPC, colPC, turnoPC);
+            tablero.registrarJugadaHistorial(filaPC, colPC, turnoPC); // Guardamos la jugada de la PC
+            agregarJugadaAlHistorial(filaPC, colPC, turnoPC); // Añadimos al texto con append()
         }
 
         turnoActual = turnoHumano;
         actualizarInterfaz();
         verificarTurno();
     }
-    
 
     private void verificarTurno() {
         if (tablero.hayGanador(turnoHumano)) {
@@ -154,7 +165,6 @@ public class JuegoActivity extends AppCompatActivity{
             if (turnoActual == turnoHumano) {
                 tvEstado.setText("Es tu turno (" + turnoHumano + ")");
             } else {
-                // El delay en este caso es para dar un pequeño instante de tiempo y que la pc no juegue al instante.
                 tvEstado.postDelayed(this::procesarJugadaPC, 300);
             }
         }
@@ -162,7 +172,7 @@ public class JuegoActivity extends AppCompatActivity{
 
     private void finalizarPartida() {
         juegoTerminado = true;
-        limpiarPartidaLocal(); // Borramos el registro para que la próxima vez partida la comience desde 0
+        limpiarPartidaLocal();
     }
 
     private void actualizarInterfaz() {
@@ -171,5 +181,33 @@ public class JuegoActivity extends AppCompatActivity{
             char simbolo = celdas.get(i);
             botonesTablero.get(i).setText(simbolo == '-' ? "" : String.valueOf(simbolo));
         }
+    }
+
+    // Método para reconstruir TODO el texto (solo se usa al cargar una partida guardada)
+    private void actualizarHistorialVisual() {
+        StringBuilder sb = new StringBuilder("Historial de Jugadas:\n");
+        int paso = 1;
+
+        for (Tablero.Jugada j : tablero.getHistorialReal()) {
+            int fila = j.index / 3;
+            int col = j.index % 3;
+            String jugador = (j.simbol == turnoPC) ? "PC (" + j.simbol + ")" : "Tú (" + j.simbol + ")";
+
+            sb.append(paso).append(". ").append(jugador)
+                    .append(" -> Fila ").append(fila).append(", Columna ").append(col).append("\n");
+            paso++;
+        }
+        tvHistorial.setText(sb.toString());
+    }
+
+    private void agregarJugadaAlHistorial(int fila, int col, char simboloJugador) {
+        String jugador = (simboloJugador == turnoPC) ? "PC (" + simboloJugador + ")" : "Tú (" + simboloJugador + ")";
+        int paso = tablero.getHistorialReal().size();
+
+        if (paso == 1) {
+            tvHistorial.setText("Historial de Jugadas:\n");
+        }
+
+        tvHistorial.append(paso + ". " + jugador + " -> Fila " + fila + ", Columna " + col + "\n");
     }
 }
